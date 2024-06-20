@@ -33,6 +33,8 @@ public class Members extends BaseEntity {
 	private String zipcode;
 	private String address;
 	private String imgName;
+	private String imgUuid;
+	private String imgPath;
 	private LocalDate birthday; //생년원일
 	private LocalDate stateday; //갱신일
 	private boolean fromSocial;
