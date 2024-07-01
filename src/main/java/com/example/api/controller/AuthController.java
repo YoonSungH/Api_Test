@@ -1,6 +1,10 @@
 package com.example.api.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -43,5 +47,29 @@ public class AuthController {
 			return new ResponseEntity<>(new ResponseDTO(e.getMessage(), false), HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	@PostMapping(value = "/login", consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String,String>> getToken(HttpServletResponse response,
+                                           @RequestBody Map<String, Object> mapObj) {
+        log.info("나와라");
+        String email = mapObj.get("email").toString();
+        String pass = mapObj.get("pass").toString();
+        log.info(email + "/" + pass);
+        String token = membersService.login(email, pass, jwtUtil);
+        Map<String ,String> map = new HashMap<>();
+        if (token != "" && token.length() > 1) {
+            /*try {
+                //response.setContentType("text/plain");
+                //response.getOutputStream().write(token.getBytes());
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }*/
+            map.put("token",token);
+        }
+
+        return new ResponseEntity<Map<String,String>>(map, HttpStatus.OK);
+    }
 
 }
