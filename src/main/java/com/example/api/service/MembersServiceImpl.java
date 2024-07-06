@@ -6,10 +6,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.demo.api.security.util.JWTUtil;
+
 import com.example.api.dto.MembersDTO;
 import com.example.api.repository.MembersRepository;
-
+import com.example.api.entity.Members;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,33 +24,57 @@ public class MembersServiceImpl implements MembersService {
     private final PasswordEncoder passwordEncoder;
 	@Override
 	public Long registMembersDTO(MembersDTO membersDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		membersDTO.setPassword(passwordEncoder.encode(membersDTO.getPassword()));
+        return membersRepository.save(dtoToEntity(membersDTO)).getMno();
 	}
 	@Override
 	public void updateMembersDTO(MembersDTO membersDTO) {
-		// TODO Auto-generated method stub
-		
+		membersRepository.save(dtoToEntity(membersDTO));
 	}
 	@Override
 	public void removeMembers(Long num) {
-		// TODO Auto-generated method stub
-		
+		membersRepository.deleteById(num);
 	}
 	@Override
 	public MembersDTO get(Long num) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<Members> result = membersRepository.findById(num);
+        if (result.isPresent()) {
+            return entityToDTO(result.get());
+        }
+        return null;
 	}
 	@Override
 	public List<MembersDTO> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Members> membersList = membersRepository.getAll();
+        return membersList.stream().map(
+                new Function<Members, MembersDTO>() {
+                    @Override
+                    public MembersDTO apply(Members members) {
+                        return entityToDTO(members);
+                    }
+                }
+        ).collect(Collectors.toList());
 	}
 	@Override
 	public String login(String email, String pass, JWTUtil jwtUtil) {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("login..........");
+        String token = "";
+        MembersDTO membersDTO;
+        Optional<Members> result = membersRepository.findByEmail(email,false);
+        if (result.isPresent()){
+            membersDTO = entityToDTO(result.get());
+            log.info("serviceimpl result: " + membersDTO);
+            log.info("matches: "+ passwordEncoder.matches(pass,membersDTO.getPassword()));
+            if (passwordEncoder.matches(pass,membersDTO.getPassword())){
+                try {
+                    token = jwtUtil.generateToken(email);
+                    log.info("token: " + token);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return token;
 	}
 
     
