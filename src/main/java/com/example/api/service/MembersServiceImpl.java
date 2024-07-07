@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.api.dto.MembersDTO;
 import com.example.api.repository.MembersRepository;
+import com.example.api.security.util.JWTUtil;
 import com.example.api.entity.Members;
 import java.util.ArrayList;
 import java.util.List;

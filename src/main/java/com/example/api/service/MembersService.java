@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.demo.api.security.util.JWTUtil;
+
 import com.example.api.dto.MembersDTO;
 import com.example.api.entity.Members;
 import com.example.api.entity.MembersRole;
+import com.example.api.security.util.JWTUtil;
 
 public interface MembersService {
 	default Members dtoToEntity(MembersDTO membersDTO) {
